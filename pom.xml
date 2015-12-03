@@ -35,20 +35,20 @@
 
 		<!-- Issue management. -->
 		<issueManagement.system>MantisBT</issueManagement.system>
-		<issueManagement.url>https://www.fdamken.de/issues</issueManagement.url>
+		<issueManagement.url>http://www.fdamken.de/issues</issueManagement.url>
 
 		<!-- CI Management. -->
 		<ciManagement.system>Jenkins CI</ciManagement.system>
-		<ciManagement.url>https://www.fdamken.de/ci</ciManagement.url>
+		<ciManagement.url>http://www.fdamken.de/ci</ciManagement.url>
 
 		<!-- SCM. -->
 		<scm.repository.owner>fdamken</scm.repository.owner>
 		<scm.repository.name>io-facade</scm.repository.name>
 		<scm.repository.repo>${scm.repository.owner}/${scm.repository.name}</scm.repository.repo>
-		<scm.repository.url>https://www.github.com/${scm.repository.repo}</scm.repository.url>
+		<scm.repository.url>http://www.github.com/${scm.repository.repo}</scm.repository.url>
 
 		<!-- SonarQube. -->
-		<sonar.host.url>https://www.fdamken.de/sonar</sonar.host.url>
+		<sonar.host.url>http://www.fdamken.de/sonar</sonar.host.url>
 
 		<!-- Some settings. -->
 		<project.build.sourceEncoding>${project.properties.encoding}</project.build.sourceEncoding>
@@ -76,7 +76,7 @@
 
 	<organization>
 		<name>fdamken</name>
-		<url>https://www.fdamken.de</url>
+		<url>http://www.fdamken.de</url>
 	</organization>
 
 	<developers>
@@ -85,7 +85,7 @@
 			<email>fabian.damken@gmx.de</email>
 			<timezone>Europe/Berlin</timezone>
 			<organization>fdamken</organization>
-			<organizationUrl>https://www.fdamken.de</organizationUrl>
+			<organizationUrl>http://www.fdamken.de</organizationUrl>
 			<roles>
 				<role>architect</role>
 				<role>product-owner</role>
