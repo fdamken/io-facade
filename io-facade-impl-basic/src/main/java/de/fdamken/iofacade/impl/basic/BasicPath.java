@@ -89,7 +89,7 @@ public class BasicPath implements Path {
     @Override
     public void delete() throws IOException, FileNotFoundException {
         if (!this.exists()) {
-            throw new FileNotFoundException("The file " + this.path + " does not exist!");
+            throw new FileNotFoundException("The path " + this.path + " does not exist!");
         }
 
         Files.walkFileTree(this.path, new FileVisitor<java.nio.file.Path>() {

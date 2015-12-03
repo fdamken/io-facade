@@ -17,9 +17,8 @@
  */
 package de.fdamken.iofacade;
 
-import java.io.FileFilter;
 import java.io.IOException;
-import java.util.Collection;
+import java.util.List;
 
 import de.fdamken.iofacade.property.Makeable;
 import de.fdamken.iofacade.util.PathFilter;
@@ -40,7 +39,7 @@ public interface Directory extends Path, Makeable {
      * @throws IOException
      *             If any I/O error occurs.
      */
-    Collection<Path> listEntries(final PathFilter filter) throws IOException;
+    List<Path> listEntries(final PathFilter filter) throws IOException;
 
     /**
      * Lists all entries within this directory.
@@ -49,7 +48,7 @@ public interface Directory extends Path, Makeable {
      * @throws IOException
      *             If any I/O error occurs.
      */
-    Collection<Path> listEntries() throws IOException;
+    List<Path> listEntries() throws IOException;
 
     /**
      * Lists all entries within the file tree, starting from this directory that
@@ -62,7 +61,7 @@ public interface Directory extends Path, Makeable {
      * @throws IOException
      *             If any I/O error occurs.
      */
-    Collection<Path> listEntriesRecursive(final FileFilter filter) throws IOException;
+    List<Path> listEntriesRecursive(final PathFilter filter) throws IOException;
 
     /**
      * Lists all entries within the file tree, starting from this directory.
@@ -71,5 +70,5 @@ public interface Directory extends Path, Makeable {
      * @throws IOException
      *             If any I/O error occurs.
      */
-    Collection<Path> listEntriesRecursive() throws IOException;
+    List<Path> listEntriesRecursive() throws IOException;
 }

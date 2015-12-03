@@ -18,6 +18,7 @@
 package de.fdamken.iofacade.impl.basic;
 
 import java.io.IOException;
+import java.nio.file.Files;
 
 import de.fdamken.iofacade.Path;
 import de.fdamken.iofacade.SymbolicLink;
@@ -44,7 +45,6 @@ public class BasicSymbolicLink extends BasicPath implements SymbolicLink {
      */
     @Override
     public Path readLink() throws IOException {
-        // TODO Auto-generated method body.
-        return null;
+        return new BasicPath(Files.readSymbolicLink(this.getPath()));
     }
 }

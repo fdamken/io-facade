@@ -17,6 +17,7 @@
  */
 package de.fdamken.iofacade;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,8 +35,10 @@ public interface File extends Path, Makeable {
      * @return The opened stream.
      * @throws IOException
      *             If any I/O error occurs.
+     * @throws FileNotFoundException
+     *             If this file does not exist.
      */
-    InputStream openInputStream() throws IOException;
+    InputStream openInputStream() throws IOException, FileNotFoundException;
 
     /**
      * Opens a stream in order to write to this file.
@@ -43,6 +46,8 @@ public interface File extends Path, Makeable {
      * @return The opened stream.
      * @throws IOException
      *             If any I/O error occurs.
+     * @throws FileNotFoundException
+     *             If this file does not exist.
      */
-    OutputStream openOutputStream() throws IOException;
+    OutputStream openOutputStream() throws IOException, FileNotFoundException;
 }

@@ -17,10 +17,12 @@
  */
 package de.fdamken.iofacade.impl.basic;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
 
 import de.fdamken.iofacade.File;
 
@@ -46,8 +48,10 @@ public class BasicFile extends BasicPath implements File {
      */
     @Override
     public void create() throws IOException, FileAlreadyExistsException {
-        // TODO Auto-generated method body.
-
+        if (this.exists()) {
+            throw new FileAlreadyExistsException("The path " + this.getPath() + " does already exist!");
+        }
+        Files.createFile(this.getPath());
     }
 
     /**
@@ -56,9 +60,11 @@ public class BasicFile extends BasicPath implements File {
      * @see de.fdamken.iofacade.File#openInputStream()
      */
     @Override
-    public InputStream openInputStream() throws IOException {
-        // TODO Auto-generated method body.
-        return null;
+    public InputStream openInputStream() throws IOException, FileNotFoundException {
+        if (!this.exists()) {
+
+        }
+        return Files.newInputStream(this.getPath());
     }
 
     /**
@@ -67,8 +73,7 @@ public class BasicFile extends BasicPath implements File {
      * @see de.fdamken.iofacade.File#openOutputStream()
      */
     @Override
-    public OutputStream openOutputStream() throws IOException {
-        // TODO Auto-generated method body.
-        return null;
+    public OutputStream openOutputStream() throws IOException, FileNotFoundException {
+        return Files.newOutputStream(this.getPath());
     }
 }
