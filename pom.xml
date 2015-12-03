@@ -12,7 +12,11 @@
 	<!-- ===== MODULES ===== -->
 
 	<modules>
+		<!-- The API. -->
 		<module>io-facade-api</module>
+
+		<!-- API implementations. -->
+		<module>io-facade-impl-basic</module>
 	</modules>
 
 
