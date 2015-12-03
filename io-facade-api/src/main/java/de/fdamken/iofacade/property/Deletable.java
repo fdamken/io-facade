@@ -28,6 +28,10 @@ public interface Deletable {
     /**
      * Deletes this path.
      *
+     * <p>
+     * <b> NOTE: Deleting is recursive. </b>
+     * </p>
+     *
      * @throws IOException
      *             If any I/O error occurs.
      * @throws FileNotFoundException
@@ -37,6 +41,10 @@ public interface Deletable {
 
     /**
      * Deletes this path, if it exist. Otherwise, this does nothing.
+     *
+     * <p>
+     * <b> NOTE: Deleting is recursive. </b>
+     * </p>
      *
      * @throws IOException
      *             If any I/O error occurs.
