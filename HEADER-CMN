@@ -1,0 +1,30 @@
+NOTE: This is the header for everything where you can use /* ... */ to
+    insert a block of free text. Please lookup HEADER,
+    HEADER-CMN, HEADER-DASH, HEADER-HASH and HEADER-XML for
+    other header types.
+    
+    Please notice that it is not required to add this header
+    to files like pom.xml (project config files), but it _is_
+    necessary to add this header to every file that gets
+    packaged and deployed (i.e. web.xml).
+
+
+--------------- START OF HEADER ---------------
+/* This file is part of IO Facade.
+ *
+ * Copyright (C) 2015  Fabian Damken
+ *
+ * IO Facade is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * IO Facade is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with IO Facade.  If not, see <http://www.gnu.org/licenses/>.
+ */
+--------------- END OF HEADER ---------------

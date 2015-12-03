@@ -1,0 +1,360 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>de.fdamken</groupId>
+	<artifactId>io-facade</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+
+
+	<!-- ===== MODULES ===== -->
+
+	<modules></modules>
+
+
+
+	<!-- ===== PROJECT PROPERTIES ===== -->
+
+	<properties>
+		<!-- Previous version. MUST CHANGE ON EVERY RELEASE! -->
+		<project.prevVersion>0.0.0</project.prevVersion>
+
+		<!-- Use this encoding everywhere! -->
+		<project.properties.encoding>UTF-8</project.properties.encoding>
+
+		<!-- Java version. -->
+		<project.properties.java.version>1.8</project.properties.java.version>
+
+		<!-- Issue management. -->
+		<issueManagement.system>MantisBT</issueManagement.system>
+		<issueManagement.url>https://www.fdamken.de/issues</issueManagement.url>
+
+		<!-- CI Management. -->
+		<ciManagement.system>Jenkins CI</ciManagement.system>
+		<ciManagement.url>https://www.fdamken.de/ci</ciManagement.url>
+
+		<!-- SCM. -->
+		<scm.repository.owner>fdamken</scm.repository.owner>
+		<scm.repository.name>io-facade</scm.repository.name>
+		<scm.repository.repo>${scm.repository.owner}/${scm.repository.name}</scm.repository.repo>
+		<scm.repository.url>https://www.github.com/${scm.repository.repo}</scm.repository.url>
+
+		<!-- SonarQube. -->
+		<sonar.host.url>https://www.fdamken.de/sonar</sonar.host.url>
+
+		<!-- Some settings. -->
+		<project.build.sourceEncoding>${project.properties.encoding}</project.build.sourceEncoding>
+	</properties>
+
+
+
+	<!-- ===== PROJECT INFORMATION ===== -->
+	<name>IO Facade</name>
+	<description>A simple input/output facade to work with files transparently through any kind of file accessing (i.e. basic file accessing via java.io or via an FTP connection).</description>
+
+	<inceptionYear>2015</inceptionYear>
+
+	<licenses>
+		<license>
+			<name>GNU General Public License Version 3</name>
+			<url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+		</license>
+		<license>
+			<name>GNU Lesser General Public License Version 3</name>
+			<url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
+			<comments>This is the main license based on GNU General Public License Version 3.</comments>
+		</license>
+	</licenses>
+
+	<organization>
+		<name>fdamken</name>
+		<url>https://www.fdamken.de</url>
+	</organization>
+
+	<developers>
+		<developer>
+			<name>Fabian Damken</name>
+			<email>fabian.damken@gmx.de</email>
+			<timezone>Europe/Berlin</timezone>
+			<organization>fdamken</organization>
+			<organizationUrl>https://www.fdamken.de</organizationUrl>
+			<roles>
+				<role>architect</role>
+				<role>product-owner</role>
+				<role>project-manager</role>
+				<role>head-of-developer</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<issueManagement>
+		<system>${issueManagement.system}</system>
+		<url>${issueManagement.url}</url>
+	</issueManagement>
+
+	<ciManagement>
+		<system>${ciManagement.system}</system>
+		<url>${ciManagement.url}</url>
+	</ciManagement>
+
+	<scm>
+		<connection>scm:git:git@github.com/${scm.repository.repo}.git</connection>
+		<developerConnection>scm:git:git@github.com:${scm.repository.repo}.git</developerConnection>
+		<url>${scm.repository.url}</url>
+		<tag>HEAD</tag>
+	</scm>
+
+	<prerequisites>
+		<maven>3.0</maven>
+	</prerequisites>
+
+
+
+	<!-- ===== DISTRIBUTION MANAGEMENT ===== -->
+
+	<distributionManagement>
+		<repository>
+			<id>fdamken-repo-ftp</id>
+			<url>ftp://repo.ftp.fdamken.de/</url>
+		</repository>
+		<snapshotRepository>
+			<id>fdamken-snap-repo-ftp</id>
+			<url>ftp://snap-repo.ftp.fdamken.de/</url>
+		</snapshotRepository>
+
+		<site>
+			<id>fdamken-docs-ftp</id>
+			<url>ftp://docs.ftp.fdamken.de/io-facade/${project.version}/</url>
+		</site>
+	</distributionManagement>
+
+
+
+	<!-- ===== DEPENDENCY MANAGEMENT ===== -->
+
+	<dependencies></dependencies>
+
+
+
+	<!-- ===== BUILD MANAGEMENT ===== -->
+
+	<build>
+		<defaultGoal>clean install</defaultGoal>
+
+		<plugins>
+			<!-- Compiler settings. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<source>${project.properties.javaVersion}</source>
+					<target>${project.properties.javaVersion}</target>
+					<encoding>${project.properties.encoding}</encoding>
+				</configuration>
+			</plugin>
+
+			<!-- Generates build numbers. -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<id>create-buildnumber</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<format>{0,date,yyyyMMdd-HHmmss}</format>
+					<items>
+						<item>timestamp</item>
+					</items>
+				</configuration>
+			</plugin>
+
+			<!-- Test runner. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.19</version>
+				<configuration>
+					<argLine>${surefireArgLine}</argLine>
+					<systemPropertyVariables>
+						<log4j.configuration>file:src/test/resources/log4j.properties</log4j.configuration>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
+
+			<!-- Test test coverage. -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.7.5.201505241946</version>
+				<executions>
+					<execution>
+						<id>pre-unit-test</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<dataFile>${project.build.directory}/jacoco.exec</dataFile>
+					<propertyName>surefireArgLine</propertyName>
+				</configuration>
+			</plugin>
+
+			<!-- Package sources. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>package-source</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<includePom>true</includePom>
+				</configuration>
+			</plugin>
+		</plugins>
+
+		<extensions>
+			<!-- Repository connector. -->
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ftp</artifactId>
+				<version>2.5</version>
+			</extension>
+		</extensions>
+	</build>
+
+
+
+	<!-- ===== REPORTING ===== -->
+
+	<reporting>
+		<plugins>
+			<!-- The Maven reports plugin. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.7</version>
+				<configuration>
+					<indentSize>4</indentSize>
+				</configuration>
+			</plugin>
+
+			<!-- The site plugin. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.4</version>
+				<configuration>
+					<locales>en_EN</locales>
+				</configuration>
+			</plugin>
+
+			<!-- Generate Javadoc. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.1</version>
+				<reportSets>
+					<reportSet>
+						<id>generate-javadoc</id>
+						<reports>
+							<report>javadoc</report>
+							<report>test-javadoc</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+				<configuration>
+					<author>false</author>
+					<bottom>Copyright &#169;
+						${project.inceptionYear}&#x2013;{currentYear}
+						${project.organization.name} (${project.organization.url}).
+						Licensed under ${project.properties.license.name}
+						(${project.properties.license.url}).</bottom>
+					<charset>${project.properties.encoding}</charset>
+					<encoding>${project.properties.encoding}</encoding>
+					<failOnError>false</failOnError>
+					<linksource>true</linksource>
+					<show>private</show>
+					<source>${project.properties.javaVersion}</source>
+					<sourcetab>4</sourcetab>
+				</configuration>
+			</plugin>
+
+			<!-- Generate changelog. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-changelog-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<basedir></basedir>
+					<issueIDRegexPattern>\d+</issueIDRegexPattern>
+					<issueLinkUrl>${issueManagement.url}/view.php?id=%ISSUE%</issueLinkUrl>
+					<displayChangeSetDetailUrl>${scm.repository.url}/commit/%REV%</displayChangeSetDetailUrl>
+					<displayFileDetailUrl>${scm.repository.url}/blob/master/%FILE%</displayFileDetailUrl>
+					<displayFileRevDetailUrl>${scm.repository.url}/blob/%REV%/%FILE%</displayFileRevDetailUrl>
+					<type>range</type>
+					<range>30</range>
+				</configuration>
+			</plugin>
+
+			<!-- Include SonarQube link. -->
+			<plugin>
+				<groupId>org.codehaus.sonar-plugins</groupId>
+				<artifactId>maven-report</artifactId>
+				<version>0.1</version>
+			</plugin>
+		</plugins>
+	</reporting>
+
+
+
+	<!-- ===== PROFILES ===== -->
+
+	<profiles>
+		<profile>
+			<id>report</id>
+			<build>
+				<defaultGoal>clean install site</defaultGoal>
+			</build>
+		</profile>
+		<profile>
+			<id>release</id>
+			<build>
+				<defaultGoal>clean deploy site-deploy</defaultGoal>
+			</build>
+			<reporting>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-changelog-plugin</artifactId>
+						<version>2.3</version>
+						<configuration>
+							<type>tag</type>
+							<tags>
+								<tag>${project.version}</tag>
+								<tag>${project.prevVersion}</tag>
+							</tags>
+						</configuration>
+					</plugin>
+				</plugins>
+			</reporting>
+		</profile>
+	</profiles>
+</project>
