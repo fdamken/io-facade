@@ -32,6 +32,12 @@ import de.fdamken.iofacade.property.Moveable;
 public interface Path extends Copyable, Deletable, Moveable {
     /**
      *
+     * @return Whether this file exists.
+     */
+    boolean exists();
+
+    /**
+     *
      * @return Whether this path is a file.
      */
     boolean isFile();
