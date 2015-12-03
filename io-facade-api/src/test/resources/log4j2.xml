@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+	<Appenders>
+		<Console name="CONSOLE" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n" />
+			<ThresholdFilter level="TRACE" />
+		</Console>
+		<Async name="ASYNC">
+			<AppenderRef ref="CONSOLE" />
+		</Async>
+	</Appenders>
+	<Loggers>
+		<Logger name="de.fdamken" level="DEBUG" additivity="false">
+			<AppenderRef ref="ASYNC" />
+		</Logger>
+
+		<!-- 3rd party loggers. -->
+		<Logger name="org.springframework" level="WARN" additivity="false">
+			<AppenderRef ref="ASYNC" />
+		</Logger>
+
+		<!-- Root logger. -->
+		<Root level="ERROR">
+			<AppenderRef ref="ASYNC" />
+		</Root>
+	</Loggers>
+</Configuration>
