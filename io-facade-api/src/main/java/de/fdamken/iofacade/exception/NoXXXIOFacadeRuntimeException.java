@@ -17,28 +17,34 @@
  */
 package de.fdamken.iofacade.exception;
 
-import de.fdamken.iofacade.File;
 import de.fdamken.iofacade.Path;
 
 /**
- * This exception is thrown if a {@link Path} cannot be converted into a
- * {@link File} (because it is no file).
+ * This is a base exception.
+ *
+ * <p>
+ * <b> NOTE: You shall not create instances of this class directly! Rather use
+ * any subclass. </b>
+ * </p>
  *
  */
-public class NoFileIOFacadeException extends NoXXXIOFacadeException {
+public abstract class NoXXXIOFacadeRuntimeException extends IOFacadeRuntimeException {
     /**
      * The serial version UID.
      *
      */
-    private static final long serialVersionUID = 126372141867354758L;
+    private static final long serialVersionUID = 7804562800747882186L;
 
     /**
-     * Constructor of NoDirectoryIOFacadeException.
+     * Constructor of NoXXXIOFacadeException.
      *
      * @param path
-     *            The {@link Path} that was failed to convert into a file.
+     *            The path that was failed to convert.
+     * @param what
+     *            The name of the path subclass the given path was failed to
+     *            convert to.
      */
-    public NoFileIOFacadeException(final Path path) {
-        super(path, "file");
+    public NoXXXIOFacadeRuntimeException(final Path path, final String what) {
+        super(path + " cannot be made to a " + what + " as it is no " + what + "!");
     }
 }

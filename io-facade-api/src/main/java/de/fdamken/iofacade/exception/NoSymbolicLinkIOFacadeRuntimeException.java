@@ -18,33 +18,28 @@
 package de.fdamken.iofacade.exception;
 
 import de.fdamken.iofacade.Path;
+import de.fdamken.iofacade.SymbolicLink;
 
 /**
- * This is a base exception.
- *
- * <p>
- * <b> NOTE: You shall not create instances of this class directly! Rather use
- * any subclass. </b>
- * </p>
+ * This exception is thrown if a {@link Path} cannot be converted into a
+ * {@link SymbolicLink} (because it is no symbolic link).
  *
  */
-public abstract class NoXXXIOFacadeException extends IOFacadeException {
+public class NoSymbolicLinkIOFacadeRuntimeException extends NoXXXIOFacadeRuntimeException {
     /**
      * The serial version UID.
      *
      */
-    private static final long serialVersionUID = 7804562800747882186L;
+    private static final long serialVersionUID = 1609499727023368508L;
 
     /**
-     * Constructor of NoXXXIOFacadeException.
+     * Constructor of NoSymbolicLinkIOFacadeException.
      *
      * @param path
-     *            The path that was failed to convert.
-     * @param what
-     *            The name of the path subclass the given path was failed to
-     *            convert to.
+     *            The {@link Path} that was failed to convert into a symbolic
+     *            link.
      */
-    public NoXXXIOFacadeException(final Path path, final String what) {
-        super(path + " cannot be made to a " + what + " as it is no " + what + "!");
+    public NoSymbolicLinkIOFacadeRuntimeException(final Path path) {
+        super(path, "symbolic link");
     }
 }

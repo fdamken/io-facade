@@ -17,29 +17,28 @@
  */
 package de.fdamken.iofacade.exception;
 
+import de.fdamken.iofacade.Directory;
 import de.fdamken.iofacade.Path;
-import de.fdamken.iofacade.SymbolicLink;
 
 /**
  * This exception is thrown if a {@link Path} cannot be converted into a
- * {@link SymbolicLink} (because it is no symbolic link).
+ * {@link Directory} (because it is no directory).
  *
  */
-public class NoSymbolicLinkIOFacadeException extends NoXXXIOFacadeException {
+public class NoDirectoryIOFacadeRuntimeException extends NoXXXIOFacadeRuntimeException {
     /**
      * The serial version UID.
      *
      */
-    private static final long serialVersionUID = 1609499727023368508L;
+    private static final long serialVersionUID = -8828387351437529636L;
 
     /**
-     * Constructor of NoSymbolicLinkIOFacadeException.
+     * Constructor of NoDirectoryIOFacadeException.
      *
      * @param path
-     *            The {@link Path} that was failed to convert into a symbolic
-     *            link.
+     *            The {@link Path} that was failed to convert into a directory.
      */
-    public NoSymbolicLinkIOFacadeException(final Path path) {
-        super(path, "symbolic link");
+    public NoDirectoryIOFacadeRuntimeException(final Path path) {
+        super(path, "directory");
     }
 }

@@ -17,6 +17,7 @@
  */
 package de.fdamken.iofacade;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -38,8 +39,10 @@ public interface Directory extends Path, Makeable {
      *         {@link PathFilter}.
      * @throws IOException
      *             If any I/O error occurs.
+     * @throws FileNotFoundException
+     *             If this path does not exist.
      */
-    List<Path> listEntries(final PathFilter filter) throws IOException;
+    List<Path> listEntries(final PathFilter filter) throws IOException, FileNotFoundException;
 
     /**
      * Lists all entries within this directory.
@@ -47,8 +50,12 @@ public interface Directory extends Path, Makeable {
      * @return All entries within this directory.
      * @throws IOException
      *             If any I/O error occurs.
+     * @throws FileNotFoundException
+     *             If this path does not exist.
      */
-    List<Path> listEntries() throws IOException;
+    default List<Path> listEntries() throws IOException, FileNotFoundException {
+        return this.listEntries(path -> true);
+    }
 
     /**
      * Lists all entries within the file tree, starting from this directory that
@@ -60,8 +67,10 @@ public interface Directory extends Path, Makeable {
      *         that are matching the given {@link PathFilter}.
      * @throws IOException
      *             If any I/O error occurs.
+     * @throws FileNotFoundException
+     *             If this path does not exist.
      */
-    List<Path> listEntriesRecursive(final PathFilter filter) throws IOException;
+    List<Path> listEntriesRecursive(final PathFilter filter) throws IOException, FileNotFoundException;
 
     /**
      * Lists all entries within the file tree, starting from this directory.
@@ -69,6 +78,10 @@ public interface Directory extends Path, Makeable {
      * @return All entries within the file tree, starting from this directory.
      * @throws IOException
      *             If any I/O error occurs.
+     * @throws FileNotFoundException
+     *             If this path does not exist.
      */
-    List<Path> listEntriesRecursive() throws IOException;
+    default List<Path> listEntriesRecursive() throws IOException, FileNotFoundException {
+        return this.listEntriesRecursive(path -> true);
+    }
 }

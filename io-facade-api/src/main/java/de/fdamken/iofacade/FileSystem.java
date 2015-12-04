@@ -42,4 +42,31 @@ public interface FileSystem {
      *             If any I/O error occurs.
      */
     Path getPath(final String path) throws IOException;
+
+    /**
+     * Integrates the given path into the given directory. This creates a new
+     * path that <i>may</i> exist.
+     *
+     * <p>
+     * For example: <br>
+     * If <code>directory</code> is <code>/tmp/example/dir</code> and
+     * <code>path</code> is <code>/etc/some/directory</code>, a new path
+     * <code>/tmp/example/dir/directory</code> is created.
+     * </p>
+     * <p>
+     * Another example: <br>
+     * If <code>directory</code> is <code>/usr/share</code> and
+     * <code>path</code> is <code>/usr/bin/xrandr</code>, a new path
+     * <code>/usr/share/xrandr</code> is created.
+     * </p>
+     *
+     * @param directory
+     *            The directory to integrate the path in.
+     * @param path
+     *            The path to integrate.
+     * @return The integrated path.
+     * @throws IOException
+     *             If any I/O error occurs.
+     */
+    Path integrate(final Directory directory, final Path path) throws IOException;
 }

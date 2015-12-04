@@ -24,8 +24,7 @@ import java.nio.file.FileAlreadyExistsException;
  * Marks a path as makeable (this path can be created).
  *
  */
-@FunctionalInterface
-public interface Makeable {
+public interface Makeable extends Existable {
     /**
      * Creates this path.
      *
@@ -40,4 +39,21 @@ public interface Makeable {
      *             If this path does already exist.
      */
     void create() throws IOException, FileAlreadyExistsException;
+
+    /**
+     * Creates this path.
+     *
+     * <p>
+     * It depends on the implementation whether a file, a directory, a link or
+     * anything else is created.
+     * </p>
+     *
+     * @throws IOException
+     *             If any I/O error occurs.
+     */
+    default void createIfNotExists() throws IOException {
+        if (!this.exists()) {
+            this.create();
+        }
+    }
 }

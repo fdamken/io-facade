@@ -15,39 +15,41 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with IO Facade.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.fdamken.iofacade.impl.basic;
+package de.fdamken.iofacade.base;
 
 import java.io.IOException;
 
-import de.fdamken.iofacade.Directory;
 import de.fdamken.iofacade.FileSystem;
 import de.fdamken.iofacade.Path;
+import de.fdamken.iofacade.SymbolicLink;
 
 /**
- * Basic Java IO implementation of {@link FileSystem}.
+ * Abstract implementation of {@link SymbolicLink}. This is used for
+ * inter-platform file moving and copying.
  *
+ * @param <B>
+ *            The type of the wrapper base path.
  */
-public class BasicFileSystem implements FileSystem {
+public abstract class AbstractSymbolicLink<B extends Path> extends AbstractPath<B> implements SymbolicLink {
     /**
-     * {@inheritDoc}
+     * Constructor of AbstractSymbolicLink.
      *
-     * @see de.fdamken.iofacade.FileSystem#getPath(java.lang.String)
+     * @param fileSystem
+     *            The file system that is used to create instances of a path.
+     * @param base
+     *            The base path. A lots of methods will delegate to it.
      */
-    @Override
-    public Path getPath(final String path) throws IOException {
-        // TODO Auto-generated method body.
-        return null;
+    public AbstractSymbolicLink(final FileSystem fileSystem, final B base) {
+        super(fileSystem, base);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @see de.fdamken.iofacade.FileSystem#integrate(de.fdamken.iofacade.Directory,
-     *      de.fdamken.iofacade.Path)
+     * @see de.fdamken.iofacade.base.AbstractPath#internalCopy(de.fdamken.iofacade.Path)
      */
     @Override
-    public Path integrate(final Directory directory, final Path path) throws IOException {
-        // TODO Auto-generated method body.
-        return null;
+    protected void internalCopy(final Path destination) throws IOException {
+        this.nativeCopy(destination);
     }
 }

@@ -54,5 +54,7 @@ public interface Copyable {
      *             If destination or any file within the destination is about to
      *             be overwritten.
      */
-    void copy(final Path destination) throws IOException, FileAlreadyExistsException;
+    default void copy(final Path destination) throws IOException, FileAlreadyExistsException {
+        this.copy(destination, false);
+    }
 }

@@ -17,25 +17,28 @@
  */
 package de.fdamken.iofacade.impl.basic;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 
 import de.fdamken.iofacade.Path;
 import de.fdamken.iofacade.SymbolicLink;
+import de.fdamken.iofacade.base.AbstractSymbolicLink;
 
 /**
  * Basic Java IO implementation of {@link SymbolicLink}.
  *
  */
-public class BasicSymbolicLink extends BasicPath implements SymbolicLink {
+public class BasicSymbolicLink extends AbstractSymbolicLink<BasicPath> {
     /**
      * Constructor of BasicSymbolicLink.
      *
-     * @param path
-     *            The Java {@link java.nio.file.Path} to wrap.
+     * @param base
+     *            The base path.
      */
-    public BasicSymbolicLink(final java.nio.file.Path path) {
-        super(path);
+    public BasicSymbolicLink(final BasicPath base) {
+        super(base.getFileSystem(), base);
     }
 
     /**
@@ -45,6 +48,36 @@ public class BasicSymbolicLink extends BasicPath implements SymbolicLink {
      */
     @Override
     public Path readLink() throws IOException {
-        return new BasicPath(Files.readSymbolicLink(this.getPath()));
+        return new BasicPath(this.getFileSystem(), Files.readSymbolicLink(this.getBase().getPath()));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see de.fdamken.iofacade.base.AbstractPath#nativeCopy(de.fdamken.iofacade.Path)
+     */
+    @Override
+    protected void nativeCopy(final Path destination) throws IOException, FileNotFoundException, FileAlreadyExistsException {
+        this.getBase().nativeCopy(destination);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see de.fdamken.iofacade.base.AbstractPath#nativeMove(de.fdamken.iofacade.Path)
+     */
+    @Override
+    protected void nativeMove(final Path destination) throws IOException, FileNotFoundException, FileAlreadyExistsException {
+        this.getBase().nativeMove(destination);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see de.fdamken.iofacade.base.AbstractSymbolicLink#internalCopy(de.fdamken.iofacade.Path)
+     */
+    @Override
+    protected void internalCopy(final Path destination) throws IOException {
+        super.internalCopy(destination);
     }
 }

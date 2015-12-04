@@ -24,7 +24,7 @@ import java.io.IOException;
  * Marks a path as deletable.
  *
  */
-public interface Deletable {
+public interface Deletable extends Existable {
     /**
      * Deletes this path.
      *
@@ -49,5 +49,9 @@ public interface Deletable {
      * @throws IOException
      *             If any I/O error occurs.
      */
-    void deleteIfExists() throws IOException;
+    default void deleteIfExists() throws IOException {
+        if (this.exists()) {
+            this.delete();
+        }
+    }
 }

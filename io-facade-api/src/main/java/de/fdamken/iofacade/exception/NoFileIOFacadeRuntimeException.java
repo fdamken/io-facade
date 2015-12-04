@@ -17,28 +17,28 @@
  */
 package de.fdamken.iofacade.exception;
 
-import de.fdamken.iofacade.Directory;
+import de.fdamken.iofacade.File;
 import de.fdamken.iofacade.Path;
 
 /**
  * This exception is thrown if a {@link Path} cannot be converted into a
- * {@link Directory} (because it is no directory).
+ * {@link File} (because it is no file).
  *
  */
-public class NoDirectoryIOFacadeException extends NoXXXIOFacadeException {
+public class NoFileIOFacadeRuntimeException extends NoXXXIOFacadeRuntimeException {
     /**
      * The serial version UID.
      *
      */
-    private static final long serialVersionUID = -8828387351437529636L;
+    private static final long serialVersionUID = 126372141867354758L;
 
     /**
      * Constructor of NoDirectoryIOFacadeException.
      *
      * @param path
-     *            The {@link Path} that was failed to convert into a directory.
+     *            The {@link Path} that was failed to convert into a file.
      */
-    public NoDirectoryIOFacadeException(final Path path) {
-        super(path, "directory");
+    public NoFileIOFacadeRuntimeException(final Path path) {
+        super(path, "file");
     }
 }

@@ -19,29 +19,23 @@ package de.fdamken.iofacade.impl.basic;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.CopyOption;
 import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.BasicFileAttributes;
 
-import de.fdamken.iofacade.Directory;
-import de.fdamken.iofacade.File;
+import de.fdamken.iofacade.FileSystem;
 import de.fdamken.iofacade.Path;
-import de.fdamken.iofacade.SymbolicLink;
-import de.fdamken.iofacade.exception.NoDirectoryIOFacadeException;
-import de.fdamken.iofacade.exception.NoFileIOFacadeException;
-import de.fdamken.iofacade.exception.NoSymbolicLinkIOFacadeException;
+import de.fdamken.iofacade.base.AbstractPath;
+import de.fdamken.iofacade.exception.NoDirectoryIOFacadeRuntimeException;
+import de.fdamken.iofacade.exception.NoFileIOFacadeRuntimeException;
+import de.fdamken.iofacade.exception.NoSymbolicLinkIOFacadeRuntimeException;
 
 /**
  * Basic Java IO implementation of {@link Path}.
  *
  */
-public class BasicPath implements Path {
+public class BasicPath extends AbstractPath<Path> {
     /**
-     * The wrapped Java {@link java.nio.file.Path}.
+     * The wrapped {@link java.nio.file.Path}.
      *
      */
     private final java.nio.file.Path path;
@@ -49,36 +43,15 @@ public class BasicPath implements Path {
     /**
      * Constructor of BasicPath.
      *
+     * @param fileSystem
+     *            The file system that is used to create instances of a path.
      * @param path
-     *            The java {@link java.nio.file.Path} to wrap.
+     *            The {@link java.nio.file.Path} to wrap.
      */
-    public BasicPath(final java.nio.file.Path path) {
+    public BasicPath(final FileSystem fileSystem, final java.nio.file.Path path) {
+        super(fileSystem, null);
+
         this.path = path;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see de.fdamken.iofacade.property.Copyable#copy(de.fdamken.iofacade.Path,
-     *      boolean)
-     */
-    @Override
-    public void copy(final Path destination, final boolean overwrite) throws IOException, FileAlreadyExistsException {
-        final CopyOption[] copyOptions = new CopyOption[overwrite ? 1 : 0];
-        if (overwrite) {
-            copyOptions[0] = StandardCopyOption.REPLACE_EXISTING;
-        }
-        Files.copy(this.path, this.asBasicPath(destination).getPath(), copyOptions);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see de.fdamken.iofacade.property.Copyable#copy(de.fdamken.iofacade.Path)
-     */
-    @Override
-    public void copy(final Path destination) throws IOException, FileAlreadyExistsException {
-        this.copy(destination, false);
     }
 
     /**
@@ -89,76 +62,16 @@ public class BasicPath implements Path {
     @Override
     public void delete() throws IOException, FileNotFoundException {
         if (!this.exists()) {
-            throw new FileNotFoundException("The path " + this.path + " does not exist!");
+            throw new FileNotFoundException(this.toString());
         }
 
-        Files.walkFileTree(this.path, new FileVisitor<java.nio.file.Path>() {
-            @Override
-            public FileVisitResult preVisitDirectory(final java.nio.file.Path dir, final BasicFileAttributes attrs)
-                    throws IOException {
-                return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult visitFile(final java.nio.file.Path file, final BasicFileAttributes attrs) throws IOException {
-                Files.delete(file);
-                return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult visitFileFailed(final java.nio.file.Path file, final IOException exc) throws IOException {
-                return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult postVisitDirectory(final java.nio.file.Path dir, final IOException exc) throws IOException {
-                Files.delete(dir);
-                return FileVisitResult.CONTINUE;
-            }
-        });
+        Files.delete(this.path);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @see de.fdamken.iofacade.property.Deletable#deleteIfExists()
-     */
-    @Override
-    public void deleteIfExists() throws IOException {
-        if (this.exists()) {
-            this.delete();
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see de.fdamken.iofacade.property.Moveable#move(de.fdamken.iofacade.Path,
-     *      boolean)
-     */
-    @Override
-    public void move(final Path destination, final boolean overwrite) throws IOException, FileAlreadyExistsException {
-        final CopyOption[] copyOptions = new CopyOption[overwrite ? 1 : 0];
-        if (overwrite) {
-            copyOptions[0] = StandardCopyOption.REPLACE_EXISTING;
-        }
-        Files.move(this.path, this.asBasicPath(destination).getPath(), copyOptions);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see de.fdamken.iofacade.property.Moveable#move(de.fdamken.iofacade.Path)
-     */
-    @Override
-    public void move(final Path destination) throws IOException, FileAlreadyExistsException {
-        this.move(destination, false);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see de.fdamken.iofacade.Path#exists()
+     * @see de.fdamken.iofacade.property.Existable#exists()
      */
     @Override
     public boolean exists() {
@@ -172,7 +85,7 @@ public class BasicPath implements Path {
      */
     @Override
     public boolean isFile() {
-        return Files.isRegularFile(this.path);
+        return !this.exists() || Files.isRegularFile(this.path);
     }
 
     /**
@@ -182,7 +95,7 @@ public class BasicPath implements Path {
      */
     @Override
     public boolean isDirectory() {
-        return Files.isDirectory(this.path);
+        return !this.exists() || Files.isDirectory(this.path);
     }
 
     /**
@@ -192,7 +105,7 @@ public class BasicPath implements Path {
      */
     @Override
     public boolean isSymbolicLink() {
-        return Files.isSymbolicLink(this.path);
+        return !this.exists() || Files.isSymbolicLink(this.path);
     }
 
     /**
@@ -201,11 +114,11 @@ public class BasicPath implements Path {
      * @see de.fdamken.iofacade.Path#asFile()
      */
     @Override
-    public File asFile() throws NoFileIOFacadeException {
+    public BasicFile asFile() throws NoFileIOFacadeRuntimeException {
         if (!this.isFile()) {
-            throw new NoFileIOFacadeException(this);
+            throw new NoFileIOFacadeRuntimeException(this);
         }
-        return new BasicFile(this.path);
+        return new BasicFile(this);
     }
 
     /**
@@ -214,11 +127,11 @@ public class BasicPath implements Path {
      * @see de.fdamken.iofacade.Path#asDirectory()
      */
     @Override
-    public Directory asDirectory() throws NoDirectoryIOFacadeException {
+    public BasicDirectory asDirectory() throws NoDirectoryIOFacadeRuntimeException {
         if (!this.isDirectory()) {
-            throw new NoDirectoryIOFacadeException(this);
+            throw new NoDirectoryIOFacadeRuntimeException(this);
         }
-        return new BasicDirectory(this.path);
+        return new BasicDirectory(this);
     }
 
     /**
@@ -227,34 +140,72 @@ public class BasicPath implements Path {
      * @see de.fdamken.iofacade.Path#asSymbolicLink()
      */
     @Override
-    public SymbolicLink asSymbolicLink() throws NoSymbolicLinkIOFacadeException {
+    public BasicSymbolicLink asSymbolicLink() throws NoSymbolicLinkIOFacadeRuntimeException {
         if (!this.isSymbolicLink()) {
-            throw new NoSymbolicLinkIOFacadeException(this);
+            throw new NoSymbolicLinkIOFacadeRuntimeException(this);
         }
-        return new BasicSymbolicLink(this.path);
+        return new BasicSymbolicLink(this);
     }
 
     /**
-     * Converts (casts) the given {@link Path} to a {@link BasicPath}.
+     * {@inheritDoc}
      *
-     * @param path
-     *            The {@link Path} to convert.
-     * @return The converted path.
-     * @throws IllegalArgumentException
-     *             If The path is not a {@link BasicPath}.
+     * @see de.fdamken.iofacade.base.AbstractPath#nativeCopy(de.fdamken.iofacade.Path)
      */
-    protected BasicPath asBasicPath(final Path path) throws IllegalArgumentException {
-        if (path instanceof BasicPath) {
-            return (BasicPath) path;
+    @Override
+    protected void nativeCopy(final Path destination) throws IOException, FileNotFoundException, FileAlreadyExistsException {
+        Files.copy(this.path, this.asBasicPath(destination).getPath());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see de.fdamken.iofacade.base.AbstractPath#nativeMove(de.fdamken.iofacade.Path)
+     */
+    @Override
+    protected void nativeMove(final Path destination) throws IOException, FileNotFoundException, FileAlreadyExistsException {
+        Files.move(this.path, this.asBasicPath(destination).getPath());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see de.fdamken.iofacade.base.AbstractPath#internalCopy(de.fdamken.iofacade.Path)
+     */
+    @Override
+    protected void internalCopy(final Path destination) throws IOException {
+        if (this.isFile()) {
+            this.asFile().internalCopy(destination);
+        } else if (this.isDirectory()) {
+            this.asDirectory().internalCopy(destination);
+        } else if (this.isSymbolicLink()) {
+            this.asSymbolicLink().internalCopy(destination);
+        } else {
+            throw new IllegalArgumentException("Destination must be either a file, a directory or a symbolic link!");
         }
-        throw new IllegalArgumentException("Path " + path + " is not an instance of " + BasicPath.class.getName() + "!");
     }
 
     /**
      *
      * @return {@link #path}.
      */
-    protected java.nio.file.Path getPath() {
+    public java.nio.file.Path getPath() {
         return this.path;
+    }
+
+    /**
+     * Converts the given path to a {@link BasicPath}.
+     *
+     * @param path
+     *            The path to convert.
+     * @return The converted {@link BasicPath}.
+     * @throws IllegalArgumentException
+     *             If the given path is not an instance of {@link BasicPath}.
+     */
+    protected BasicPath asBasicPath(final Path path) throws IllegalArgumentException {
+        if (path instanceof BasicPath) {
+            return (BasicPath) path;
+        }
+        throw new IllegalArgumentException("Path is not an instance of " + BasicPath.class.getSimpleName() + "!");
     }
 }

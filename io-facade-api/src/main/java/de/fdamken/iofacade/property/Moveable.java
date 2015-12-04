@@ -17,6 +17,7 @@
  */
 package de.fdamken.iofacade.property;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 
@@ -36,12 +37,15 @@ public interface Moveable {
      *            Whether to overwrite already existing files or not.
      * @throws IOException
      *             If any I/O error occurs.
+     * @throws FileNotFoundException
+     *             If this path does not exist.
      * @throws FileAlreadyExistsException
      *             If <code>overwrite</code> is <code>false</code> and the
      *             destination or any file within the destination is about to be
      *             overwritten.
      */
-    void move(final Path destination, final boolean overwrite) throws IOException, FileAlreadyExistsException;
+    void move(final Path destination, final boolean overwrite) throws IOException, FileNotFoundException,
+            FileAlreadyExistsException;
 
     /**
      * Moves this path to the given path.
@@ -50,9 +54,13 @@ public interface Moveable {
      *            The path to move this path to.
      * @throws IOException
      *             If any I/O error occurs.
+     * @throws FileNotFoundException
+     *             If this path does not exist.
      * @throws FileAlreadyExistsException
      *             If the destination or any file within the destination is
      *             about to be overwritten.
      */
-    void move(final Path destination) throws IOException, FileAlreadyExistsException;
+    default void move(final Path destination) throws IOException, FileNotFoundException, FileAlreadyExistsException {
+        this.move(destination, false);
+    }
 }

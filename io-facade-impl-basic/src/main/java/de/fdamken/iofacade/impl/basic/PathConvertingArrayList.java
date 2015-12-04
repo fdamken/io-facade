@@ -17,37 +17,46 @@
  */
 package de.fdamken.iofacade.impl.basic;
 
-import java.io.IOException;
+import java.util.ArrayList;
 
-import de.fdamken.iofacade.Directory;
 import de.fdamken.iofacade.FileSystem;
 import de.fdamken.iofacade.Path;
 
 /**
- * Basic Java IO implementation of {@link FileSystem}.
+ * Implementation of {@link ArrayList} that can convert
+ * {@link java.nio.file.Path}s to {@link Path}s on-the-fly.
  *
  */
-public class BasicFileSystem implements FileSystem {
+public class PathConvertingArrayList extends ArrayList<Path> {
     /**
-     * {@inheritDoc}
+     * The serial version UID.
      *
-     * @see de.fdamken.iofacade.FileSystem#getPath(java.lang.String)
      */
-    @Override
-    public Path getPath(final String path) throws IOException {
-        // TODO Auto-generated method body.
-        return null;
+    private static final long serialVersionUID = -1156314242702996853L;
+
+    /**
+     * The file system to create new {@link Path}s.
+     *
+     */
+    private final FileSystem fileSystem;
+
+    /**
+     * Constructor of PathConvertingArrayList.
+     *
+     * @param fileSystem
+     *            The file system to create new {@link Path}s.
+     */
+    public PathConvertingArrayList(final FileSystem fileSystem) {
+        this.fileSystem = fileSystem;
     }
 
     /**
-     * {@inheritDoc}
+     * Adds the given path to this list.
      *
-     * @see de.fdamken.iofacade.FileSystem#integrate(de.fdamken.iofacade.Directory,
-     *      de.fdamken.iofacade.Path)
+     * @param path
+     *            The path to add.
      */
-    @Override
-    public Path integrate(final Directory directory, final Path path) throws IOException {
-        // TODO Auto-generated method body.
-        return null;
+    public void addPath(final java.nio.file.Path path) {
+        this.add(new BasicPath(this.fileSystem, path));
     }
 }
