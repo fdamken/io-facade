@@ -18,16 +18,21 @@
 package de.fdamken.iofacade.impl.basic;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Objects;
 
+import de.fdamken.iofacade.AbstractFileSystem;
 import de.fdamken.iofacade.Directory;
 import de.fdamken.iofacade.FileSystem;
 import de.fdamken.iofacade.Path;
+import de.fdamken.iofacade.util.Assertion;
 
 /**
  * Basic Java IO implementation of {@link FileSystem}.
  *
  */
-public class BasicFileSystem implements FileSystem {
+public class BasicFileSystem extends AbstractFileSystem {
     /**
      * {@inheritDoc}
      *
@@ -35,8 +40,7 @@ public class BasicFileSystem implements FileSystem {
      */
     @Override
     public Path getPath(final String path) throws IOException {
-        // TODO Auto-generated method body.
-        return null;
+        return new BasicPath(this, Paths.get(path));
     }
 
     /**
@@ -47,7 +51,56 @@ public class BasicFileSystem implements FileSystem {
      */
     @Override
     public Path integrate(final Directory directory, final Path path) throws IOException {
-        // TODO Auto-generated method body.
-        return null;
+        Assertion.acquire(directory).named("directory").notNull();
+        Assertion.acquire(path).named("path").notNull();
+
+        final BasicPath dir = this.asBasicPath(directory);
+        final BasicPath file = this.asBasicPath(path);
+
+        final java.nio.file.Path dirPath = dir.getPath();
+        final java.nio.file.Path filePath = file.getPath();
+
+        final java.nio.file.Path resultPath = Paths.get(dirPath.toString(), Objects.toString(filePath.getFileName()));
+
+        return new BasicPath(this, resultPath);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see de.fdamken.iofacade.AbstractFileSystem#nativeCopy(de.fdamken.iofacade.Path,
+     *      de.fdamken.iofacade.Path)
+     */
+    @Override
+    protected void nativeCopy(final Path from, final Path to) throws IOException {
+        Files.copy(this.asBasicPath(from).getPath(), this.asBasicPath(to).getPath());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see de.fdamken.iofacade.AbstractFileSystem#nativeMove(de.fdamken.iofacade.Path,
+     *      de.fdamken.iofacade.Path)
+     */
+    @Override
+    protected void nativeMove(final Path from, final Path to) throws IOException {
+        Files.move(this.asBasicPath(from).getPath(), this.asBasicPath(to).getPath());
+    }
+
+    /**
+     * Checks whether the given {@link Path} is a {@link BasicPath} and converts
+     * it, if it is.
+     *
+     * @param path
+     *            The {@link Path} to convert.
+     * @return The converted {@link BasicPath}.
+     * @throws IllegalArgumentException
+     *             If the given {@link Path} is not a {@link BasicPath}.
+     */
+    private BasicPath asBasicPath(final Path path) throws IllegalArgumentException {
+        if (path instanceof BasicPath) {
+            return (BasicPath) path;
+        }
+        throw new IllegalArgumentException("Path is no " + BasicPath.class.getCanonicalName() + "!");
     }
 }

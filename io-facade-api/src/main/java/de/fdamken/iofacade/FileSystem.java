@@ -17,7 +17,9 @@
  */
 package de.fdamken.iofacade;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 
 /**
  * This class is the basic access point for any I/O types (like basic Java IO).
@@ -60,6 +62,11 @@ public interface FileSystem {
      * <code>/usr/share/xrandr</code> is created.
      * </p>
      *
+     * <p>
+     * <b> NOTE: It is not checked whether the resulting path exists or not.
+     * </b>
+     * </p>
+     *
      * @param directory
      *            The directory to integrate the path in.
      * @param path
@@ -69,4 +76,86 @@ public interface FileSystem {
      *             If any I/O error occurs.
      */
     Path integrate(final Directory directory, final Path path) throws IOException;
+
+    /**
+     * Copies the given path to the given destination.
+     *
+     * @param from
+     *            The path to copy to path <code>to</code>.
+     * @param to
+     *            The path to copy the path <code>from</code> to.
+     * @param overwrite
+     *            Whether to overwrite already existing files or not.
+     * @throws IOException
+     *             If any I/O error occurs.
+     * @throws FileNotFoundException
+     *             If <code>from</code> does not exist.
+     * @throws FileAlreadyExistsException
+     *             If <code>overwrite</code> is <code>false</code> and the
+     *             destination or any file within the destination is about to be
+     *             overwritten.
+     */
+    void copy(final Path from, final Path to, final boolean overwrite) throws IOException, FileNotFoundException,
+    FileAlreadyExistsException;
+
+    /**
+     * Copies the given path to the given destination. Does not overwrite.
+     *
+     * @param from
+     *            The path to copy.
+     * @param to
+     *            The path to copy the path <code>from</code> to.
+     * @throws IOException
+     *             If any I/O error occurs.
+     * @throws FileNotFoundException
+     *             If <code>from</code> does not exist.
+     * @throws FileAlreadyExistsException
+     *             If <code>overwrite</code> is <code>false</code> and the
+     *             destination or any file within the destination is about to be
+     *             overwritten.
+     */
+    default void copy(final Path from, final Path to) throws IOException, FileNotFoundException, FileAlreadyExistsException {
+        this.copy(from, to, false);
+    }
+
+    /**
+     * Moves the given path to the given path.
+     *
+     * @param from
+     *            The path to move.
+     * @param to
+     *            The path to move the path <code>from</code> to.
+     * @param overwrite
+     *            Whether to overwrite already existing files or not.
+     * @throws IOException
+     *             If any I/O error occurs.
+     * @throws FileNotFoundException
+     *             If <code>from</code> does not exist.
+     * @throws FileAlreadyExistsException
+     *             If <code>overwrite</code> is <code>false</code> and the
+     *             destination or any file within the destination is about to be
+     *             overwritten.
+     */
+    void move(final Path from, final Path to, final boolean overwrite) throws IOException, FileNotFoundException,
+    FileAlreadyExistsException;
+
+    /**
+     * Moves the given path to the given path. Does not overwrite.
+     *
+     * @param from
+     *            The path to move.
+     * @param to
+     *            The path to move the path <code>from</code> to.
+     * @throws IOException
+     *             If any I/O error occurs.
+     * @throws FileNotFoundException
+     *             If <code>from</code> does not exist.
+     * @throws FileAlreadyExistsException
+     *             If <code>overwrite</code> is <code>false</code> and the
+     *             destination or any file within the destination is about to be
+     *             overwritten.
+     */
+    default void move(final Path from, final Path to) throws IOException, FileNotFoundException, FileAlreadyExistsException {
+        this.move(from, to, false);
+    }
 }

@@ -53,12 +53,6 @@ public interface PathFilter extends Function<Path, Boolean> {
      * <td>exclude</td>
      * <td>exclude &amp; step in</td>
      * </tr>
-     * <tr>
-     * <th>Symbolic Link</th>
-     * <td>include</td>
-     * <td>exclude</td>
-     * <td>exclude &amp; follow</td>
-     * </tr>
      * </table>
      * <ul>
      * <li><code>include</code> means that the invoking method should include

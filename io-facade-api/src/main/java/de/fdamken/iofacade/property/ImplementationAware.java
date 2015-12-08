@@ -15,31 +15,18 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with IO Facade.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.fdamken.iofacade.exception;
+package de.fdamken.iofacade.property;
 
-import de.fdamken.iofacade.Path;
-import de.fdamken.iofacade.SymbolicLink;
+import de.fdamken.iofacade.Implementation;
 
 /**
- * This exception is thrown if a {@link Path} cannot be converted into a
- * {@link SymbolicLink} (because it is no symbolic link).
+ * Marks a path as implementation aware.
  *
  */
-public class NoSymbolicLinkIOFacadeRuntimeException extends NoXXXIOFacadeRuntimeException {
+public interface ImplementationAware {
     /**
-     * The serial version UID.
      *
+     * @return The implementation identifier for the implementation.
      */
-    private static final long serialVersionUID = 1609499727023368508L;
-
-    /**
-     * Constructor of NoSymbolicLinkIOFacadeException.
-     *
-     * @param path
-     *            The {@link Path} that was failed to convert into a symbolic
-     *            link.
-     */
-    public NoSymbolicLinkIOFacadeRuntimeException(final Path path) {
-        super(path, "symbolic link");
-    }
+    Implementation getImplementation();
 }

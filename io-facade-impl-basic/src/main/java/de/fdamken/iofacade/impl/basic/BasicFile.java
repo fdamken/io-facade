@@ -25,42 +25,24 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 
 import de.fdamken.iofacade.File;
-import de.fdamken.iofacade.Path;
-import de.fdamken.iofacade.base.AbstractFile;
+import de.fdamken.iofacade.FileSystem;
+import de.fdamken.iofacade.util.Assertion;
 
 /**
  * Basic Java IO implementation of {@link File}.
  *
  */
-public class BasicFile extends AbstractFile<BasicPath> {
+public class BasicFile extends BasicPath implements File {
     /**
      * Constructor of BasicFile.
      *
+     * @param fileSystem
+     *            The file system.
      * @param path
-     *            The base path.
+     *            The {@link java.nio.file.Path} to wrap.
      */
-    public BasicFile(final BasicPath path) {
-        super(path.getFileSystem(), path);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see de.fdamken.iofacade.File#openInputStream()
-     */
-    @Override
-    public InputStream openInputStream() throws IOException, FileNotFoundException {
-        return Files.newInputStream(this.getBase().getPath());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see de.fdamken.iofacade.File#openOutputStream()
-     */
-    @Override
-    public OutputStream openOutputStream() throws IOException, FileNotFoundException {
-        return Files.newOutputStream(this.getBase().getPath());
+    public BasicFile(final FileSystem fileSystem, final java.nio.file.Path path) {
+        super(fileSystem, path);
     }
 
     /**
@@ -70,36 +52,32 @@ public class BasicFile extends AbstractFile<BasicPath> {
      */
     @Override
     public void create() throws IOException, FileAlreadyExistsException {
-        Files.createFile(this.getBase().getPath());
+        Assertion.acquire(this).notExists();
+
+        Files.createFile(this.getPath());
     }
 
     /**
      * {@inheritDoc}
      *
-     * @see de.fdamken.iofacade.base.AbstractPath#nativeCopy(de.fdamken.iofacade.Path)
+     * @see de.fdamken.iofacade.File#openInputStream()
      */
     @Override
-    protected void nativeCopy(final Path destination) throws IOException, FileNotFoundException, FileAlreadyExistsException {
-        this.getBase().copy(destination);
+    public InputStream openInputStream() throws IOException, FileNotFoundException {
+        Assertion.acquire(this).exists();
+
+        return Files.newInputStream(this.getPath());
     }
 
     /**
      * {@inheritDoc}
      *
-     * @see de.fdamken.iofacade.base.AbstractPath#nativeMove(de.fdamken.iofacade.Path)
+     * @see de.fdamken.iofacade.File#openOutputStream()
      */
     @Override
-    protected void nativeMove(final Path destination) throws IOException, FileNotFoundException, FileAlreadyExistsException {
-        this.getBase().move(destination);
-    }
+    public OutputStream openOutputStream() throws IOException, FileNotFoundException {
+        Assertion.acquire(this).exists();
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see de.fdamken.iofacade.base.AbstractFile#internalCopy(de.fdamken.iofacade.Path)
-     */
-    @Override
-    protected void internalCopy(final Path destination) throws IOException, FileNotFoundException, FileAlreadyExistsException {
-        super.internalCopy(destination);
+        return Files.newOutputStream(this.getPath());
     }
 }

@@ -19,10 +19,10 @@ package de.fdamken.iofacade;
 
 import de.fdamken.iofacade.exception.NoDirectoryIOFacadeRuntimeException;
 import de.fdamken.iofacade.exception.NoFileIOFacadeRuntimeException;
-import de.fdamken.iofacade.exception.NoSymbolicLinkIOFacadeRuntimeException;
 import de.fdamken.iofacade.property.Copyable;
 import de.fdamken.iofacade.property.Deletable;
 import de.fdamken.iofacade.property.Existable;
+import de.fdamken.iofacade.property.ImplementationAware;
 import de.fdamken.iofacade.property.Moveable;
 
 /**
@@ -30,7 +30,7 @@ import de.fdamken.iofacade.property.Moveable;
  * example.
  *
  */
-public interface Path extends Copyable, Deletable, Existable, Moveable {
+public interface Path extends Copyable, Deletable, Existable, Moveable, ImplementationAware {
     /**
      *
      * @return Whether this path is a file. If this path does not exists, this
@@ -44,13 +44,6 @@ public interface Path extends Copyable, Deletable, Existable, Moveable {
      *         this returns <code>true</code>.
      */
     boolean isDirectory();
-
-    /**
-     *
-     * @return Whether this path is a symbolic link. If this path does not
-     *         exists, this returns <code>true</code>.
-     */
-    boolean isSymbolicLink();
 
     /**
      * Converts this path into a {@link File}.
@@ -79,18 +72,4 @@ public interface Path extends Copyable, Deletable, Existable, Moveable {
      *             If this path is not a directory.
      */
     Directory asDirectory() throws NoDirectoryIOFacadeRuntimeException;
-
-    /**
-     * Converts this path into a {@link SymbolicLink}.
-     *
-     * <p>
-     * If this path does not exist, this returns a symbolic link object that
-     * points to a non existing symbolic link.
-     * </p>
-     *
-     * @return The created {@link SymbolicLink}.
-     * @throws NoSymbolicLinkIOFacadeRuntimeException
-     *             If this path is not a symbolic link.
-     */
-    SymbolicLink asSymbolicLink() throws NoSymbolicLinkIOFacadeRuntimeException;
 }

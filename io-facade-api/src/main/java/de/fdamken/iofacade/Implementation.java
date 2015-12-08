@@ -17,19 +17,28 @@
  */
 package de.fdamken.iofacade;
 
-import java.io.IOException;
-
 /**
- * Represents a symbolic link within a file system.
+ * Identifies a valid implementation of this API and provides some basic
+ * information.
  *
  */
-public interface SymbolicLink extends Path {
+public interface Implementation {
     /**
-     * Reads the link and determines the destination.
      *
-     * @return The determined destination.
-     * @throws IOException
-     *             If any I/O error occurs.
+     * @return The ID of this implementation. Must be unique.
      */
-    Path readLink() throws IOException;
+    String getId();
+
+    /**
+     *
+     * @return The name of this implementation.
+     */
+    String getName();
+
+    /**
+     *
+     * @return The basic class that implements the {@link FileSystem} interface.
+     *         This is the main entry point for an implementation.
+     */
+    Class<? extends FileSystem> getFileSystem();
 }

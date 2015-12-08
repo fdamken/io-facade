@@ -21,45 +21,31 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import de.fdamken.iofacade.Directory;
+import de.fdamken.iofacade.FileSystem;
 import de.fdamken.iofacade.Path;
-import de.fdamken.iofacade.base.AbstractDirectory;
+import de.fdamken.iofacade.util.Assertion;
+import de.fdamken.iofacade.util.DirectoryUtil;
 import de.fdamken.iofacade.util.PathFilter;
 
 /**
- * Basic Java IO implementation of {@link Path}.
+ * Basic Java IO implementation of {@link Directory}.
  *
  */
-public class BasicDirectory extends AbstractDirectory<BasicPath> {
+public class BasicDirectory extends BasicPath implements Directory {
     /**
      * Constructor of BasicDirectory.
      *
-     * @param base
-     *            The base path.
+     * @param fileSystem
+     *            The file system.
+     * @param path
+     *            The {@link java.nio.file.Path} to wrap.
      */
-    public BasicDirectory(final BasicPath base) {
-        super(base.getFileSystem(), base);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see de.fdamken.iofacade.Directory#listEntries(de.fdamken.iofacade.util.PathFilter)
-     */
-    @Override
-    public List<Path> listEntries(final PathFilter filter) throws IOException, FileNotFoundException {
-        if (!this.exists()) {
-            throw new FileNotFoundException(this.toString());
-        }
-
-        final PathConvertingArrayList result = new PathConvertingArrayList(this.getFileSystem());
-        Files.list(this.getBase().getPath())
-                .filter(path -> Objects.equals(filter.apply(new BasicPath(this.getFileSystem(), path)), true))
-                .forEach(result::addPath);
-        return Collections.unmodifiableList(result);
+    public BasicDirectory(final FileSystem fileSystem, final java.nio.file.Path path) {
+        super(fileSystem, path);
     }
 
     /**
@@ -69,40 +55,29 @@ public class BasicDirectory extends AbstractDirectory<BasicPath> {
      */
     @Override
     public void create() throws IOException, FileAlreadyExistsException {
-        if (this.exists()) {
-            throw new FileAlreadyExistsException(this.toString());
-        }
-
-        Files.createDirectories(this.getBase().getPath());
+        Assertion.acquire(this).notExists();
     }
 
     /**
      * {@inheritDoc}
      *
-     * @see de.fdamken.iofacade.base.AbstractPath#nativeCopy(de.fdamken.iofacade.Path)
+     * @see de.fdamken.iofacade.Directory#listEntries(de.fdamken.iofacade.util.PathFilter)
      */
     @Override
-    protected void nativeCopy(final Path destination) throws IOException, FileNotFoundException, FileAlreadyExistsException {
-        this.getBase().nativeCopy(destination);
+    public List<Path> listEntries(final PathFilter filter) throws IOException, FileNotFoundException {
+        final PathConvertingArrayList result = new PathConvertingArrayList(this.getFileSystem());
+        Files.list(this.getPath()).filter(path -> Objects.equals(filter.apply(new BasicPath(this.getFileSystem(), path)), true))
+                .forEach(result::addPath);
+        return result;
     }
 
     /**
      * {@inheritDoc}
      *
-     * @see de.fdamken.iofacade.base.AbstractPath#nativeMove(de.fdamken.iofacade.Path)
+     * @see de.fdamken.iofacade.Directory#listEntriesRecursive(de.fdamken.iofacade.util.PathFilter)
      */
     @Override
-    protected void nativeMove(final Path destination) throws IOException, FileNotFoundException, FileAlreadyExistsException {
-        this.getBase().nativeMove(destination);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see de.fdamken.iofacade.base.AbstractDirectory#internalCopy(de.fdamken.iofacade.Path)
-     */
-    @Override
-    protected void internalCopy(final Path destination) throws IOException, FileNotFoundException, FileAlreadyExistsException {
-        super.internalCopy(destination);
+    public List<Path> listEntriesRecursive(final PathFilter filter) throws IOException, FileNotFoundException {
+        return DirectoryUtil.listEntriesRecursive(this, filter);
     }
 }
