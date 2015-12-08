@@ -26,13 +26,33 @@ import de.fdamken.iofacade.AbstractFileSystem;
 import de.fdamken.iofacade.Directory;
 import de.fdamken.iofacade.FileSystem;
 import de.fdamken.iofacade.Path;
+import de.fdamken.iofacade.config.Implementation;
 import de.fdamken.iofacade.util.Assertion;
 
 /**
  * Basic Java IO implementation of {@link FileSystem}.
  *
  */
+@Implementation(id = "basic-java-io",
+name = "Basic Java IO",
+config = BasicFileSystemConfig.class)
 public class BasicFileSystem extends AbstractFileSystem {
+    /**
+     * The configuration that was used to create this instance.
+     *
+     */
+    private final BasicFileSystemConfig config;
+
+    /**
+     * Constructor of BasicFileSystem.
+     *
+     * @param config
+     *            The configuration that was used to create this instance.
+     */
+    public BasicFileSystem(final BasicFileSystemConfig config) {
+        this.config = config;
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -40,7 +60,7 @@ public class BasicFileSystem extends AbstractFileSystem {
      */
     @Override
     public Path getPath(final String path) throws IOException {
-        return new BasicPath(this, Paths.get(path));
+        return new BasicPath(this, Paths.get(this.config.getRoot(), this.splitPath(path)));
     }
 
     /**
@@ -102,5 +122,13 @@ public class BasicFileSystem extends AbstractFileSystem {
             return (BasicPath) path;
         }
         throw new IllegalArgumentException("Path is no " + BasicPath.class.getCanonicalName() + "!");
+    }
+
+    /**
+     *
+     * @return {@link #config}.
+     */
+    public BasicFileSystemConfig getConfig() {
+        return this.config;
     }
 }

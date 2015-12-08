@@ -15,43 +15,38 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with IO Facade.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.fdamken.iofacade.impl.basic;
-
-import de.fdamken.iofacade.FileSystem;
-import de.fdamken.iofacade.Implementation;
+package de.fdamken.iofacade.config.config.exception;
 
 /**
- * Basic Java IO implementation of {@link Implementation}.
+ * The base exception for all configuration parsing problems.
  *
  */
-public class BasicImplementation implements Implementation {
+public class ParsingConfigurationException extends ConfigurationException {
     /**
-     * {@inheritDoc}
+     * The serial version UID.
      *
-     * @see de.fdamken.iofacade.Implementation#getId()
      */
-    @Override
-    public String getId() {
-        return "basic-java-io";
+    private static final long serialVersionUID = -7847702848342341333L;
+
+    /**
+     * Constructor of ParseConfigurationException.
+     *
+     * @param message
+     *            A detailed error message.
+     * @param cause
+     *            The error causing this exception.
+     */
+    public ParsingConfigurationException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 
     /**
-     * {@inheritDoc}
+     * Constructor of ParseConfigurationException.
      *
-     * @see de.fdamken.iofacade.Implementation#getName()
+     * @param message
+     *            A detailed error message.
      */
-    @Override
-    public String getName() {
-        return "Basic Java IO";
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see de.fdamken.iofacade.Implementation#getFileSystem()
-     */
-    @Override
-    public Class<? extends FileSystem> getFileSystem() {
-        return BasicFileSystem.class;
+    public ParsingConfigurationException(final String message) {
+        super(message);
     }
 }

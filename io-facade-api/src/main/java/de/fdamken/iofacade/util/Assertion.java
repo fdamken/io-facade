@@ -18,7 +18,9 @@
 package de.fdamken.iofacade.util;
 
 import java.io.FileNotFoundException;
+import java.lang.annotation.Annotation;
 import java.nio.file.FileAlreadyExistsException;
+import java.util.function.Function;
 
 import de.fdamken.iofacade.property.Existable;
 
@@ -44,7 +46,7 @@ public final class Assertion {
      * The object to check.
      *
      */
-    private final Object obj;
+    private Object obj;
     /**
      * The name that is used within exception messages to identify the object
      * that is being checked (i.e. a parameter name).
@@ -140,11 +142,109 @@ public final class Assertion {
      */
     public Assertion notExists() throws FileAlreadyExistsException {
         if (!(this.obj instanceof Existable)) {
-            throw new IllegalStateException("Obj cannot exist ( no instance of " + Existable.class.getCanonicalName() + ")!");
+            throw new IllegalStateException("Obj cannot exist (no instance of " + Existable.class.getCanonicalName() + ")!");
         }
         if (((Existable) this.obj).exists()) {
             throw new FileAlreadyExistsException(this.getName() + ": " + this.obj.toString());
         }
+        return this;
+    }
+
+    /**
+     * Tests whether the given annotation is present on the current object.
+     *
+     * @param annotationClass
+     *            The annotation to test for.
+     * @return <code>this</code>
+     * @throws IllegalArgumentException
+     *             If the annotation is not present.
+     */
+    public Assertion annotationPresent(final Class<? extends Annotation> annotationClass) throws IllegalArgumentException {
+        if (this.obj instanceof Class) {
+            if (!((Class<?>) this.obj).isAnnotationPresent(annotationClass)) {
+                throw new IllegalArgumentException(this.getName() + " does not have the annotation "
+                        + annotationClass.getCanonicalName() + "!");
+            }
+        } else {
+            if (!this.obj.getClass().isAnnotationPresent(annotationClass)) {
+                throw new IllegalArgumentException(this.getName() + " does not have the annotation "
+                        + annotationClass.getCanonicalName() + "!");
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Tests whether the toString() method obj the object returns a string that
+     * starts with the given string.
+     *
+     * @param str
+     *            The string that the toString()-string should start with.
+     * @return <code>this</code>
+     * @throws IllegalArgumentException
+     *             If the toString()-string does not start with the given
+     *             string.
+     */
+    public Assertion startsWith(final String str) throws IllegalArgumentException {
+        if (!this.obj.toString().startsWith(str)) {
+            throw new IllegalArgumentException(this.getName() + " does not start with " + str + "!");
+        }
+        return this;
+    }
+
+    /**
+     * Tests whether the object is an interface.
+     *
+     * <p>
+     * <b> NOTE: This does only work if the object is an instance of
+     * {@link Class}. </b>
+     * </p>
+     *
+     * @return <code>this</code>
+     * @throws If
+     *             the object is not an interface.
+     */
+    public Assertion isInterface() throws IllegalArgumentException {
+        if (this.obj instanceof Class) {
+            if (!((Class<?>) this.obj).isInterface()) {
+                throw new IllegalArgumentException(this.getName() + " is not an interface!");
+            }
+        } else {
+            throw new IllegalStateException("Obj cannot be an interface (no instance of " + Class.class.getCanonicalName() + ")!");
+        }
+        return this;
+    }
+
+    /**
+     * Tests whether the object is an instance of the given class.
+     *
+     * @param clazz
+     *            The class to check against.
+     * @return <code>this</code>
+     * @throws IllegalArgumentException
+     *             If the object is not an instance of the given class.
+     */
+    public Assertion isInstanceOf(final Class<?> clazz) throws IllegalArgumentException {
+        if (!clazz.isInstance(this.obj)) {
+            throw new IllegalArgumentException(this.getName() + " is not an instance of " + clazz.getCanonicalName() + "!");
+        }
+        return this;
+    }
+
+    /**
+     * Converts the stored value into a string.
+     *
+     * @param <T>
+     *            The type of the stored data. This must be consistent with the
+     *            type of the stored object!
+     * @param func
+     *            The function to apply to convert the stored object into a
+     *            string.
+     * @return <code>this</code>
+     */
+    @SuppressWarnings("unchecked")
+    public <T> Assertion asString(final Function<T, String> func) {
+        this.obj = func.apply((T) this.obj);
         return this;
     }
 

@@ -15,18 +15,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with IO Facade.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.fdamken.iofacade.property;
-
-import de.fdamken.iofacade.Implementation;
+package de.fdamken.iofacade.config.config.annotation;
 
 /**
- * Marks a path as implementation aware.
+ * This is used to name a singular of an element. This may be used when working
+ * with arrays, so you can name your sub-nodes in correct english.
  *
  */
-public interface ImplementationAware {
+public @interface SingularName {
     /**
      *
-     * @return The implementation identifier for the implementation.
+     * @return The singular name.
      */
-    Implementation getImplementation();
+    String value();
 }

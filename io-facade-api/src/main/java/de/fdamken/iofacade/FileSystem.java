@@ -36,6 +36,14 @@ public interface FileSystem {
      * It is possible to chroot a file system via any configuration file. If it
      * is, every path is starting from that chrooted root.
      * </p>
+     * <p>
+     * NOTE: It does not matter whether you use a backslash (<code>\</code>)
+     * (windows-style) or a slash (<code>/</code>) to delimit your path-parts.
+     * </p>
+     * <p>
+     * <b> NOTE: Relative parts are not handled correctly! You shall use
+     * absolute paths everywhere! </b>
+     * </p>
      *
      * @param path
      *            The string representation of the path to acquire.

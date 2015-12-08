@@ -25,7 +25,6 @@ import java.nio.file.Files;
 import de.fdamken.iofacade.Directory;
 import de.fdamken.iofacade.File;
 import de.fdamken.iofacade.FileSystem;
-import de.fdamken.iofacade.Implementation;
 import de.fdamken.iofacade.Path;
 import de.fdamken.iofacade.exception.NoDirectoryIOFacadeRuntimeException;
 import de.fdamken.iofacade.exception.NoFileIOFacadeRuntimeException;
@@ -104,18 +103,18 @@ public class BasicPath implements Path {
      */
     @Override
     public void move(final Path destination, final boolean overwrite) throws IOException, FileNotFoundException,
-            FileAlreadyExistsException {
+    FileAlreadyExistsException {
         this.fileSystem.move(this, destination, overwrite);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @see de.fdamken.iofacade.property.ImplementationAware#getImplementation()
+     * @see de.fdamken.iofacade.property.FileSystemAware#getFileSystemClass()
      */
     @Override
-    public Implementation getImplementation() {
-        return new BasicImplementation();
+    public Class<? extends FileSystem> getFileSystemClass() {
+        return BasicFileSystem.class;
     }
 
     /**

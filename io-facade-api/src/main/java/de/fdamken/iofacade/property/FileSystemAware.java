@@ -15,30 +15,18 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with IO Facade.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.fdamken.iofacade;
+package de.fdamken.iofacade.property;
+
+import de.fdamken.iofacade.FileSystem;
 
 /**
- * Identifies a valid implementation of this API and provides some basic
- * information.
+ * Marks a path as file system aware.
  *
  */
-public interface Implementation {
+public interface FileSystemAware {
     /**
      *
-     * @return The ID of this implementation. Must be unique.
+     * @return The class that implements the {@link FileSystem} interface.
      */
-    String getId();
-
-    /**
-     *
-     * @return The name of this implementation.
-     */
-    String getName();
-
-    /**
-     *
-     * @return The basic class that implements the {@link FileSystem} interface.
-     *         This is the main entry point for an implementation.
-     */
-    Class<? extends FileSystem> getFileSystem();
+    Class<? extends FileSystem> getFileSystemClass();
 }

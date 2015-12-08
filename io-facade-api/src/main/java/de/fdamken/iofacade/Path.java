@@ -22,7 +22,7 @@ import de.fdamken.iofacade.exception.NoFileIOFacadeRuntimeException;
 import de.fdamken.iofacade.property.Copyable;
 import de.fdamken.iofacade.property.Deletable;
 import de.fdamken.iofacade.property.Existable;
-import de.fdamken.iofacade.property.ImplementationAware;
+import de.fdamken.iofacade.property.FileSystemAware;
 import de.fdamken.iofacade.property.Moveable;
 
 /**
@@ -30,7 +30,7 @@ import de.fdamken.iofacade.property.Moveable;
  * example.
  *
  */
-public interface Path extends Copyable, Deletable, Existable, Moveable, ImplementationAware {
+public interface Path extends Copyable, Deletable, Existable, Moveable, FileSystemAware {
     /**
      *
      * @return Whether this path is a file. If this path does not exists, this

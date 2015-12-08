@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.FileAlreadyExistsException;
 
+import de.fdamken.iofacade.config.ImplementationManager;
 import de.fdamken.iofacade.util.Assertion;
 
 /**
@@ -68,7 +69,7 @@ public abstract class AbstractFileSystem implements FileSystem {
      */
     @Override
     public void copy(final Path from, final Path to, final boolean overwrite) throws IOException, FileNotFoundException,
-            FileAlreadyExistsException {
+    FileAlreadyExistsException {
         Assertion.acquire(from).named("from").notNull().exists();
         Assertion.acquire(to).named("to").notNull();
 
@@ -99,7 +100,7 @@ public abstract class AbstractFileSystem implements FileSystem {
      */
     @Override
     public void move(final Path from, final Path to, final boolean overwrite) throws IOException, FileNotFoundException,
-            FileAlreadyExistsException {
+    FileAlreadyExistsException {
         Assertion.acquire(from).named("from").notNull().exists();
         Assertion.acquire(to).named("to").notNull();
 
@@ -160,6 +161,24 @@ public abstract class AbstractFileSystem implements FileSystem {
     }
 
     /**
+     * Splits the given path into path-parts. It does not matter whether
+     * path-parts are delimited by a slash or a backslash.
+     *
+     * <p>
+     * For example: <br>
+     * The input <code>/.//../this\\\\is/a\\path/.././</code> will result in
+     * <code>[this, is, a, path]</code>
+     * </p>
+     *
+     * @param path
+     *            The path to split.
+     * @return The split path.
+     */
+    protected String[] splitPath(final String path) {
+        return path.replaceAll("^[\\./\\\\]+(.*?)[\\./\\\\]+$", "$1").replaceAll("[/\\\\]{2,}", "/").split("[/\\\\]");
+    }
+
+    /**
      * Checks whether the given {@link Path}s are in the same implementation.
      *
      * @param path0
@@ -172,8 +191,8 @@ public abstract class AbstractFileSystem implements FileSystem {
         assert path0 != null : "path0 must not be null!";
         assert path1 != null : "path1 must not be null!";
 
-        final String path0ImplId = path0.getImplementation().getId();
-        final String path1ImplId = path1.getImplementation().getId();
+        final String path0ImplId = ImplementationManager.getInstance().retrieveImplementation(path0.getFileSystemClass()).id();
+        final String path1ImplId = ImplementationManager.getInstance().retrieveImplementation(path1.getFileSystemClass()).id();
 
         return path0ImplId.equals(path1ImplId);
     }
