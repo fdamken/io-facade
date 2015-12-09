@@ -109,8 +109,8 @@ public class ConfigTree {
      *             If no value is present.
      */
     public String asString() throws IllegalStateException {
-        if (!this.isValuePresent()) {
-            throw new IllegalStateException("No such value!");
+        if (!this.isStringValue()) {
+            throw new IllegalStateException("No string value!");
         }
 
         return this.value;
@@ -121,6 +121,9 @@ public class ConfigTree {
      * @return The stored value as an <code>int</code>.
      */
     public int asInt() {
+        if (this.isIntValue()) {
+            throw new IllegalStateException("No int value!");
+        }
         return Integer.parseInt(this.asString());
     }
 
@@ -129,6 +132,9 @@ public class ConfigTree {
      * @return The stored value as a <code>double</code>.
      */
     public double asDouble() {
+        if (this.isDoubleValue()) {
+            throw new IllegalStateException("No double value!");
+        }
         return Double.parseDouble(this.asString());
     }
 
@@ -137,6 +143,9 @@ public class ConfigTree {
      * @return The sub-nodes as a {@link String}[].
      */
     public String[] asStringArray() {
+        if (this.isStringArray()) {
+            throw new IllegalStateException("No string array!");
+        }
         return this.subNodes.stream().map(subNode -> subNode.asString()).toArray(String[]::new);
     }
 
@@ -145,6 +154,9 @@ public class ConfigTree {
      * @return The sub-nodes as a <code>int</code>[].
      */
     public int[] asIntArray() {
+        if (this.isIntArray()) {
+            throw new IllegalStateException("No int array!");
+        }
         return this.subNodes.stream().mapToInt(subNode -> subNode.asInt()).toArray();
     }
 
@@ -153,6 +165,9 @@ public class ConfigTree {
      * @return The sub-nodes as a <code>double</code>[].
      */
     public double[] asDoubleArray() {
+        if (this.isDoubleArray()) {
+            throw new IllegalStateException("No double array!");
+        }
         return this.subNodes.stream().mapToDouble(subNode -> subNode.asDouble()).toArray();
     }
 

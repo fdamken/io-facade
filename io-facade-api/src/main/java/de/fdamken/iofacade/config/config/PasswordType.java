@@ -17,8 +17,29 @@
  */
 package de.fdamken.iofacade.config.config;
 
+import de.fdamken.iofacade.config.config.annotation.Password;
+
+/**
+ * The password type is used to for password fields within configuration
+ * mappings. It <b>must</b> be used as the return type if {@link Password} is
+ * used.
+ *
+ */
 public interface PasswordType {
+    /**
+     * Lookup <a href=
+     * "http://www.codingeek.com/java/strings/why-to-use-char-array-instead-of-string-for-storing-password-in-java-security/"
+     * >Why to use Char Array instead of String for storing password in Java -
+     * Security</a> to learn why a <code>char[]</code> is returned instead of a
+     * {@link String}.
+     *
+     * @return The decrypted password.
+     */
     char[] getDecrypted();
 
+    /**
+     *
+     * @return The encrypted password.
+     */
     String getEncrypted();
 }

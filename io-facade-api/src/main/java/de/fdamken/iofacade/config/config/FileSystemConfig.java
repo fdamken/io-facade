@@ -75,6 +75,11 @@ import de.fdamken.iofacade.config.config.annotation.Password;
  * then <code>bar</code> is available as <code>foo.bar</code> in the root type
  * (like java method chaining)).
  * </p>
+ * <p>
+ * <b> NOTE: Method that are not starting with <code>get*</code> are completely
+ * ignored within the mapping process. And they thrown an
+ * {@link UnsupportedOperationException} when invoked. </b>
+ * </p>
  *
  */
 public interface FileSystemConfig {

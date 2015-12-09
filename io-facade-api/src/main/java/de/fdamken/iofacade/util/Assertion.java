@@ -201,8 +201,8 @@ public final class Assertion {
      * </p>
      *
      * @return <code>this</code>
-     * @throws If
-     *             the object is not an interface.
+     * @throws IllegalArgumentException
+     *             If the object is not an interface.
      */
     public Assertion isInterface() throws IllegalArgumentException {
         if (this.obj instanceof Class) {

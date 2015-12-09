@@ -25,10 +25,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.stream.Collectors;
 
 import de.fdamken.iofacade.config.config.FileSystemConfig;
-import de.fdamken.iofacade.config.config.PasswordType;
+import de.fdamken.iofacade.config.config.PasswordTypeImpl;
 import de.fdamken.iofacade.config.config.exception.GenerationConfigurationException;
 import de.fdamken.iofacade.config.config.exception.ParsingConfigurationException;
 import de.fdamken.iofacade.config.config.mapper.ConfigMapping.Type;
@@ -44,6 +45,12 @@ import de.fdamken.iofacade.util.Assertion;
  *            The type of the configuration class that should be mapped.
  */
 public class ConfigMapper<T> {
+    /**
+     * A map where instances of {@link ConfigMapper}s are cached.
+     *
+     */
+    private static final Map<Class<?>, ConfigMapper<?>> MAPPER_CACHE = new WeakHashMap<Class<?>, ConfigMapper<?>>();
+
     /**
      * The configuration class to map configurations from/to.
      *
@@ -62,16 +69,38 @@ public class ConfigMapper<T> {
      * @param configClass
      *            The configuration class to map configurations from/to.
      */
-    public ConfigMapper(final Class<T> configClass) {
+    private ConfigMapper(final Class<T> configClass) {
         Assertion.acquire(configClass).notNull().isInterface();
 
         this.configClass = configClass;
         this.configMappings = Collections.unmodifiableList(this.retrieveConfigMappings());
     }
 
+    /**
+     * Constructs a new {@link ConfigMapper} with the given class.
+     *
+     * @param configClass
+     *            The configuration class to map configurations from/to.
+     * @return The created {@link ConfigMapper}.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> ConfigMapper<T> create(final Class<T> configClass) {
+        ConfigMapper<T> result = (ConfigMapper<T>) ConfigMapper.MAPPER_CACHE.get(configClass);
+        if (result == null) {
+            synchronized (ConfigMapper.MAPPER_CACHE) {
+                result = (ConfigMapper<T>) ConfigMapper.MAPPER_CACHE.get(configClass);
+                if (result == null) {
+                    result = new ConfigMapper<T>(configClass);
+                    ConfigMapper.MAPPER_CACHE.put(configClass, result);
+                }
+            }
+        }
+        return result;
+    }
+
     public T mapFromConfig(final ConfigTree config) throws ParsingConfigurationException {
         final Map<String, Object> dataMap = new HashMap<String, Object>();
-        // TODO: Fill data map.
+
         for (final ConfigMapping configMapping : this.configMappings) {
             final String name = configMapping.getName();
             final ConfigTree dataNode = config.byName(name);
@@ -87,40 +116,33 @@ public class ConfigMapper<T> {
                 defaultValue = configMapping.getDefaultValue();
             }
 
-            // TODO: Implement data parsing.
-
             final Object data;
             if (dataNode != null) {
                 switch (dataType) {
                     case PASSWORD:
-                        data = new PasswordType() {
-                            @Override
-                            public String getEncrypted() {
-                                // TODO Auto-generated method body.
-                                return null;
-                            }
-
-                            @Override
-                            public char[] getDecrypted() {
-                                // TODO Auto-generated method body.
-                                return null;
-                            }
-                        };
+                        data = new PasswordTypeImpl(dataNode.asString(), configMapping.getSecretKey());
                         break;
                     case STRING:
+                        data = dataNode.asString();
                         break;
                     case INT:
+                        data = dataNode.asInt();
                         break;
                     case DOUBLE:
+                        data = dataNode.asDouble();
                         break;
                     case STRING_ARRAY:
+                        data = dataNode.asStringArray();
                         break;
                     case INT_ARRAY:
+                        data = dataNode.asIntArray();
                         break;
                     case DOUBLE_ARRAY:
+                        data = dataNode.asDoubleArray();
                         break;
                     case COMPLEX:
-                        // TODO: Implement complex type parsing.
+                        final ConfigMapper<?> mapper = ConfigMapper.create(configMapping.getComplexDataTypeClass());
+                        data = mapper.mapFromConfig(dataNode);
                         break;
                     default:
                         throw new ParsingConfigurationException("Unsupported data type " + dataType + "!");
@@ -180,7 +202,7 @@ public class ConfigMapper<T> {
                 result.addSubNode(configData);
             } else if (dataType == ConfigMapping.Type.COMPLEX) {
                 @SuppressWarnings("rawtypes")
-                final ConfigMapper mapper = new ConfigMapper(configMapping.getComplexDataTypeClass());
+                final ConfigMapper mapper = ConfigMapper.create(configMapping.getComplexDataTypeClass());
                 result.addSubNode(mapper.mapToConfig(rawData, name));
             } else {
                 final String data = String.valueOf(rawData);
@@ -230,8 +252,19 @@ public class ConfigMapper<T> {
          */
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-            // TODO Auto-generated method body.
-            return null;
+            if (!method.getName().startsWith("get")) {
+                throw new UnsupportedOperationException("Only methods starting with get* are supported!");
+            }
+
+            final ConfigMapping mapping = ConfigMapping.createFromMethod(method, false);
+            mapping.buildName();
+            final String name = mapping.getName();
+
+            final Object result = this.data.get(name);
+            if (result == null) {
+                throw new UnsupportedOperationException("Unsupported mapping name: " + name);
+            }
+            return result;
         }
     }
 }

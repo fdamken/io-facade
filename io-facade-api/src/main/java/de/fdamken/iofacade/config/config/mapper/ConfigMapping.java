@@ -47,46 +47,46 @@ public class ConfigMapping {
      * The name of this property.
      *
      */
-    private final String name;
+    private String name;
     /**
      * The singular name of this property. This is only used when this is an
      * array.
      *
      */
-    private final String singularName;
+    private String singularName;
     /**
      * The default value, if any. Otherwise <code>null</code>.
      *
      */
-    private final String defaultValue;
+    private String defaultValue;
     /**
      * Whether this property is optional.
      *
      */
-    private final boolean optional;
+    private boolean optional;
     /**
      * Whether this property is a password property.
      *
      */
-    private final boolean password;
+    private boolean password;
     /**
      * The path to the secret key to decrypt the password. If {@link #password}
      * is <code>false</code>, this is <code>null</code>.
      *
      */
-    private final String secretKey;
+    private String secretKey;
 
     /**
      * The data type of this mapping.
      *
      */
-    private final ConfigMapping.Type dataType;
+    private ConfigMapping.Type dataType;
     /**
      * The class that represents the complex data type, if the data type above
      * is {@link ConfigMapping.Type#COMPLEX}.
      *
      */
-    private final Class<?> complexDataTypeClass;
+    private Class<?> complexDataTypeClass;
 
     /**
      * Constructor of ConfigMapping.
@@ -98,14 +98,9 @@ public class ConfigMapping {
         assert method != null : "Method must not be null!";
 
         this.method = method;
-        this.name = this.extractName();
-        this.singularName = this.extractSingularName();
-        this.defaultValue = this.extractDefaultValue();
-        this.optional = this.extractIsOptional();
-        this.secretKey = this.extractSecretKey();
-        this.password = this.secretKey != null;
-        this.dataType = this.extractDataType();
-        this.complexDataTypeClass = this.dataType == ConfigMapping.Type.COMPLEX ? this.extractComplexDataType() : null;
+        if (this.method.getParameterCount() > 0) {
+            throw new IllegalArgumentException("A config mapping must not have any parameters!");
+        }
     }
 
     /**
@@ -114,12 +109,39 @@ public class ConfigMapping {
      *
      * @param method
      *            The method to parse. Must not be null.
+     * @param buildAll
+     *            Whether to build all properties or not.
+     * @return The newly created configuration mapping.
+     */
+    public static ConfigMapping createFromMethod(final Method method, final boolean buildAll) {
+        Assertion.acquire(method).named("method").notNull();
+
+        final ConfigMapping mapping = new ConfigMapping(method);
+        if (buildAll) {
+            mapping.buildName();
+            mapping.buildSingularName();
+            mapping.buildDefaultValue();
+            mapping.buildOptional();
+            mapping.buildPassword();
+            mapping.buildDataType();
+        }
+        return mapping;
+    }
+
+    /**
+     * Parses the annotations of the given method and creates a new
+     * configuration mapping.
+     *
+     * <p>
+     * This builds all properties.
+     * </p>
+     *
+     * @param method
+     *            The method to parse. Must not be null.
      * @return The newly created configuration mapping.
      */
     public static ConfigMapping createFromMethod(final Method method) {
-        Assertion.acquire(method).named("method").notNull();
-
-        return new ConfigMapping(method);
+        return ConfigMapping.createFromMethod(method, true);
     }
 
     /**
@@ -144,11 +166,10 @@ public class ConfigMapping {
     }
 
     /**
-     * Extracts the property name from the method.
+     * Builds {@link #name}.
      *
-     * @return The extracted name.
      */
-    private String extractName() {
+    public void buildName() {
         final String name;
         if (this.method.isAnnotationPresent(Named.class)) {
             name = this.method.getAnnotation(Named.class).value();
@@ -160,70 +181,71 @@ public class ConfigMapping {
             rawPropertyName = rawPropertyName.replaceFirst("^get-?", "");
             name = rawPropertyName;
         }
-        return name;
+
+        this.name = name;
     }
 
     /**
-     * Extracts the singular name from the method.
+     * Builds {@link #singularName}.
      *
-     * @return The singular name.
      */
-    private String extractSingularName() {
-        final String name;
+    public void buildSingularName() {
+        final String singularName;
         if (this.method.isAnnotationPresent(SingularName.class)) {
-            name = this.method.getAnnotation(SingularName.class).value();
+            singularName = this.method.getAnnotation(SingularName.class).value();
         } else {
-            name = this.name.substring(0, this.name.length() - 1);
+            singularName = this.name.substring(0, this.name.length() - 1);
         }
-        return name;
+
+        this.singularName = singularName;
     }
 
     /**
-     * Extracts the default value from the method.
+     * Builds {@link #defaultValue}.
      *
-     * @return The extracted default value, if any. Otherwise <code>null</code>.
      */
-    private String extractDefaultValue() {
+    public void buildDefaultValue() {
         final String defaultValue;
         if (this.method.isAnnotationPresent(Default.class)) {
             defaultValue = this.method.getAnnotation(Default.class).value();
         } else {
             defaultValue = null;
         }
-        return defaultValue;
+
+        this.defaultValue = defaultValue;
     }
 
     /**
-     * Extracts whether the property is optional or not from the method.
+     * Builds {@link #optional}.
      *
-     * @return Whether the property is optional or not.
      */
-    private boolean extractIsOptional() {
-        return this.method.isAnnotationPresent(Optional.class);
+    public void buildOptional() {
+        final boolean optional = this.method.isAnnotationPresent(Optional.class);
+
+        this.optional = optional;
     }
 
     /**
-     * Extracts the private key from the method if the annotation
-     * {@link Password} is present.
+     * Builds {@link #secretKey} and {@link #password}.
      *
-     * @return The extracted private key, if any. Otherwise <code>null</code>.
      */
-    private String extractSecretKey() {
-        final String privateKey;
+    public void buildPassword() {
+        final String secretKey;
         if (this.method.isAnnotationPresent(Password.class)) {
-            privateKey = this.method.getAnnotation(Password.class).value();
+            secretKey = this.method.getAnnotation(Password.class).value();
         } else {
-            privateKey = null;
+            secretKey = null;
         }
-        return privateKey;
+
+        this.secretKey = secretKey;
+        this.password = secretKey != null;
     }
 
     /**
-     * Extracts the data type from the method.
+     * Builds {@link #dataType} and {@link #complexDataTypeClass}.
      *
-     * @return The extracted data type.
      */
-    private ConfigMapping.Type extractDataType() {
+    public void buildDataType() {
         final ConfigMapping.Type dataType;
         final Class<?> returnType = this.method.getReturnType();
         if (returnType == null) {
@@ -247,16 +269,16 @@ public class ConfigMapping {
         } else {
             throw new IllegalArgumentException("The return type " + returnType.getCanonicalName() + " is not supported!");
         }
-        return dataType;
-    }
 
-    /**
-     * Extracts the complex data type from the method.
-     *
-     * @return The extracted complex data type.
-     */
-    private Class<?> extractComplexDataType() {
-        return this.method.getReturnType();
+        final Class<?> complexDataTypeClass;
+        if (dataType == ConfigMapping.Type.COMPLEX) {
+            complexDataTypeClass = this.method.getReturnType();
+        } else {
+            complexDataTypeClass = null;
+        }
+
+        this.dataType = dataType;
+        this.complexDataTypeClass = complexDataTypeClass;
     }
 
     /**
