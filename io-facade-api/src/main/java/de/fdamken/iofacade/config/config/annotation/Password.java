@@ -35,6 +35,18 @@ import de.fdamken.iofacade.config.config.PasswordType;
  * the usage is not possible.
  * </p>
  * <p>
+ * If you want your secret key location to be stored in another property, you
+ * may want to reference to that property. To do this, you must provide a single
+ * word starting with a hash (<code>#</code>) to identify a reference. That
+ * single word must be a valid property name within the same mapping
+ * configuration. <br>
+ * That property <b>must</b> be a string property. <br>
+ * For example, if you have a property named <code>"foo"</code> (method name:
+ * <code>getFoo()</code> or tagged with {@link Named}("foo")) the reference to
+ * that property will be <code>"#foo"</code>. This must be the only content of
+ * the annotation value.
+ * </p>
+ * <p>
  * <b> NOTE: If you use this annotation, the return type must be
  * {@link PasswordType} in order to provide correct encryption/decryption. </b>
  * </p>

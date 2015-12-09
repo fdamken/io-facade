@@ -69,7 +69,7 @@ import de.fdamken.iofacade.config.config.annotation.Password;
  * It is also possible to load more complex (self-defined) types. These complex
  * types must be interfaces in the same style as a basic
  * {@link FileSystemConfig} (tagged with annotations). Then, it is possible to
- * map these to the configuration file. THe properties that are contained by the
+ * map these to the configuration file. The properties that are contained by the
  * sub-type are mapped under the root type (i.e. the root property is
  * <code>foo</code> and the sub-type contains a property named <code>bar</code>,
  * then <code>bar</code> is available as <code>foo.bar</code> in the root type

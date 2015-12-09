@@ -21,9 +21,20 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 
+import de.fdamken.iofacade.config.Implementation;
+import de.fdamken.iofacade.config.config.FileSystemConfig;
+
 /**
  * This class is the basic access point for any I/O types (like basic Java IO).
  * It is used to acquire paths.
+ *
+ * <p>
+ * Any implementation of this interface must be tagged with
+ * {@link Implementation} to identify a valid implementation. With that given a
+ * single parameter of type {@link FileSystemConfig} (or any subclass) is
+ * allowed in the constructor which will be automatically mapped to the set
+ * {@link FileSystemConfig} in the {@link Implementation} annotation.
+ * </p>
  *
  */
 public interface FileSystem {
@@ -104,7 +115,7 @@ public interface FileSystem {
      *             overwritten.
      */
     void copy(final Path from, final Path to, final boolean overwrite) throws IOException, FileNotFoundException,
-    FileAlreadyExistsException;
+            FileAlreadyExistsException;
 
     /**
      * Copies the given path to the given destination. Does not overwrite.
@@ -145,7 +156,7 @@ public interface FileSystem {
      *             overwritten.
      */
     void move(final Path from, final Path to, final boolean overwrite) throws IOException, FileNotFoundException,
-    FileAlreadyExistsException;
+            FileAlreadyExistsException;
 
     /**
      * Moves the given path to the given path. Does not overwrite.

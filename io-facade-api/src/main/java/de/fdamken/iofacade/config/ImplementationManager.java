@@ -20,6 +20,16 @@ package de.fdamken.iofacade.config;
 import de.fdamken.iofacade.FileSystem;
 import de.fdamken.iofacade.util.Assertion;
 
+/**
+ * The implementation manager is used to handle all available implementations on
+ * the classpath that are tagged with the annotation {@link Implementation}.
+ *
+ * <p>
+ * It also handles the instantiation of any {@link FileSystem} class, which is
+ * the main entry point for any implementation.
+ * </p>
+ *
+ */
 public class ImplementationManager {
     /**
      * The one and only instance of this class.
